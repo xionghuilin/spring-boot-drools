@@ -1,0 +1,53 @@
+package rules
+
+import com.jk.entity.UserInfo
+
+
+//规则一：如果申请人既没房也没车，同时学历为大专以下，并且月薪少于5000，那么不通过
+rule "userInfo_1"
+    when
+        $u : UserInfo(house == null
+                    && car == null
+                    && education.equals("大专以下")
+                    && salary < 5000
+                )
+    then
+        $u.setFlag(false);
+        System.out.println("规则一：如果申请人既没房也没车，同时学历为大专以下，并且月薪少于5000，那么不通过");
+
+end
+
+//规则二：如果申请人既没房也没车，同时学历为大专或本科，并且月薪少于3000，那么不通过
+rule "userInfo_2"
+    when
+        $u : UserInfo(house == null
+                      && car == null
+                      && education in("大专","本科")
+                      && salary < 3000)
+    then
+        $u.setFlag(false);
+        System.out.println("规则二：如果申请人既没房也没车，同时学历为大专或本科，并且月薪少于3000，那么不通过");
+end
+
+
+//规则三：如果申请人既没房也没车，同时学历为本科以上，并且月薪少于2000，同时之前没有信用卡的，那么不通过
+rule "userInfo_3"
+    when
+        $u : UserInfo(house == null
+                        && car == null
+                        && education.equals("本科以上")
+                        && salary < 2000
+                        && !hasCreditCard)
+    then
+        $u.setFlag(false);
+        System.out.println("规则三：如果申请人既没房也没车，同时学历为本科以上，并且月薪少于2000，同时之前没有信用卡的，那么不通过");
+end
+
+// 规则四：如果申请人现有的信用卡数量大于10，那么不通过
+rule "userInfo_4"
+    when
+        $u : UserInfo(creditCardCount > 10)
+    then
+        $u.setFlag(false);
+        System.out.println("规则四：如果申请人现有的信用卡数量大于10，那么不通过");
+end
